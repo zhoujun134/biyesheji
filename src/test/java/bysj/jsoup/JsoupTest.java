@@ -8,6 +8,8 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JsoupTest {
     public static void main(String[] args) throws IOException {
@@ -80,24 +82,54 @@ public class JsoupTest {
                 .keySet()
                 .forEach(sheng_fen -> {
                     try {
-                        System.out.println("*********************************************************");
                         System.out.println("当前省份为： " + sheng_fens.get(sheng_fen));
                         Document doc = Jsoup.connect("http://www.gaokao.com/" + sheng_fen + "/fsx/")
                                 .timeout(3000)
                                 .get();
                         Element content = doc.body();// 获取body中的内容
-                        Elements tbody = content.getElementsByTag("tbody");
-                        for (Element diqu : tbody) {
-                            String linkText = diqu.text();//获取汉语
-                            System.out.println(sheng_fen +" : " + linkText);
-                        }
-                        System.out.println("*********************************************************");
+                        //文科或者不分文理科
+                        Elements wk_or_N_wl = content.getElementsByClass("blue ft14 txtC").next();
+                        int size = wk_or_N_wl.size();
+                        wk_or_N_wl.forEach(table ->{
+//                            System.out.println(" html =>  " + table.html());
+                            table.getElementsByTag("tr")
+                                    .forEach(tr ->{
+//                                        Elements ths = tr.getElementsByTag("th");
+                                        tr.getElementsByTag("td").forEach(
+                                                td ->{
+                                                    if(isContainChinese(td.text())){
+                                                        System.out.println("\n"+String.format("%-6s", td.text()));
+                                                    }else {
+                                                        System.out.print(String.format("%-6s", td.text()));
+                                                       }
+
+                                                }
+                                        );
+//                                        System.out.println("");
+                                    });
+                        });
+                        System.out.println();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });
     }
 
+    /**
+     * 判断字符串中是否包含中文
+     * @param str
+     * 待校验字符串
+     * @return 是否为中文
+     * @warn 不能校验是否为中文标点符号
+     */
+    private static boolean isContainChinese(String str) {
+        Pattern p = Pattern.compile("[\u4e00-\u9fa5]");
+        Matcher m = p.matcher(str);
+        if (m.find()) {
+            return true;
+        }
+        return false;
+    }
 }
 /**
  * 2018	2017	2016	2015	2014	2013	2012	2011	2010	2009
