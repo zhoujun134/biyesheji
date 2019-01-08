@@ -102,7 +102,6 @@ public class JsoupTest {
                                                     }else {
                                                         System.out.print(String.format("%-6s", td.text()));
                                                        }
-
                                                 }
                                         );
 //                                        System.out.println("");
@@ -131,8 +130,3 @@ public class JsoupTest {
         return false;
     }
 }
-/**
- * 2018	2017	2016	2015	2014	2013	2012	2011	2010	2009
- * 一本	546	    518   	518  	513 	526 	507 	539 	543 	533 	548
- * 二本	476	    452	    460  	462 	478 	459 	492 	496 	492 	507
- */
